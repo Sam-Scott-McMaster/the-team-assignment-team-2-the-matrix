@@ -1,17 +1,9 @@
 #include <stdio.h>
 
-//mergeUp()
-
-/*
- * Params:2D Array
- * Returns: New 2D Array
- */
-
 #define ROWS 4
 #define COLUMNS 4
 
-int testGrid[ROWS][COLUMNS] = { {2,2,0,0}, {2,0,16,16}, {2,0,0,0}, {2,0,0,0} };
-
+int testGrid[ROWS][COLUMNS] = { {2,4,0,0}, {2,4,16,16}, {2,0,0,0}, {2,0,0,0} };
 
 /*
  * Params: 2D Array
@@ -38,6 +30,19 @@ void printRow(int *row){
 
     for(int i = 0; i < COLUMNS; i++){
         printf("%d", row[i]);
+    }
+    printf("\n");
+}
+
+/*
+ * Params: Pointer to Array of Ints
+ * Return: Void
+ */
+
+void printColumn(int *column){
+
+    for(int i = 0; i < ROWS; i++){
+        printf("%d", column[i]);
     }
     printf("\n");
 }
@@ -71,23 +76,6 @@ void getColumn(int matrix[ROWS][COLUMNS], int index, int column[COLUMNS]){
         }
     }
 }
-
-/*
- * Params: Pointer to Array of Ints
- * Return: Void
- */
-
-void printColumn(int *column){
-
-    for(int i = 0; i < ROWS; i++){
-        printf("%d", column[i]);
-    }
-    printf("\n");
-}
-
-//Iterates from right to left, checking to see if its current value
-//Is equal to the one behind it, if condition is met then add at the index infront
-//And set its current index to 0
 
 /*
  * Params: Point to Array of Ints (Row)
@@ -153,28 +141,75 @@ int *mergeDown(int *column){
     return column;
 }
 
-int main(){
-    printArray(testGrid);
-    int *row1 = getRow(testGrid, 0);
-    int *row2 = getRow(testGrid, 1);
-    int columnArr[COLUMNS];
-    getColumn(testGrid, 0, columnArr);
-
-    printf("\n");
-    printColumn(columnArr);
-    printf("\nMERGING DOWN\n");
-    mergeDown(columnArr);
-    //mergeUp(columnArr);
-    printColumn(columnArr);
-
-    printf("\n");
-    mergeLeft(row1);
-    printRow(row1);
-
-    printf("\n");
-    mergeRight(row2);
-    printRow(row2);
-
-
-    return 0;
+void mergeColumn(int matrix[ROWS][COLUMNS], int column[COLUMNS], int index){
+        for (int i = 0; i < COLUMNS; i++){
+            //Get first index of all rows
+            matrix[i][index] = column[i]; 
+        }
 }
+
+// 4222
+
+/*
+ * Params: 2D Array, String Direction
+ * Return: Depends on Direction
+ */
+
+void merge(int matrix[ROWS][COLUMNS], int direction){
+    //Merging Right = 1
+    //Merging Left = 2
+    //Merging Up = 3
+    //Merging Down = 4
+    if (direction == 1){
+        for (int i = 0; i < ROWS; i++){
+            int *row = getRow(matrix, i);
+            mergeRight(row);
+        }
+    }
+
+    if (direction == 2){
+        for (int i = 0; i < ROWS; i++){
+            int *row = getRow(matrix, i);
+            mergeLeft(row);
+        }
+    }
+
+    if (direction == 3){
+        int columnArr[COLUMNS];
+        for (int i = 0; i < COLUMNS; i++){
+            getColumn(matrix, i, columnArr);
+            mergeUp(columnArr);
+            mergeColumn(matrix, mergeUp(columnArr), i);
+        }
+    }
+
+    if (direction == 4){
+        int columnArr[COLUMNS];
+        for (int i = 0; i < COLUMNS; i++){
+            getColumn(matrix, i, columnArr);
+            mergeColumn(matrix, mergeDown(columnArr), i);
+        }
+    }
+}
+
+//int main(){
+    //printArray(testGrid);
+    //int *row1 = getRow(testGrid, 0);
+    //int *row2 = getRow(testGrid, 1);
+
+    //printf("\nMERGING LEFT\n");
+    //mergeLeft(row1);
+    //printRow(row1);
+
+    //printf("\nMERGING RIGHT\n");
+    //mergeRight(row2);
+    //printRow(row2);
+
+    //printf("\nGRID PRE ACTION\n");
+    //printArray(testGrid);
+
+    //printf("\nPRINTING COLUMNS MERGED DOWN\n");
+    //merge(testGrid, 2);
+    //printArray(testGrid);
+    //return 0;
+//}
